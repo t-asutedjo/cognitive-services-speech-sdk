@@ -56,8 +56,8 @@ public class Main {
         // subscription key, and service region.
         //
         // Note: In preview, the Direct Line Speech channel currently supports only the `westus2` region.
-        final String subscriptionKey = "YourSubscriptionKey";
-        final String region = "YourServiceRegion";
+        final String subscriptionKey = "ccbc14f1bb2a476187a831c1dcc6a3fc";
+        final String region = "westus2";
 
         assert !subscriptionKey.equals("YourSubscriptionKey") : "Replace the string \"YourSubscriptionKey\" with your speech subscription key.";
         assert !region.equals("YourServiceRegion") : "Replace the string \"YourServiceRegion\" with your service region.";

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.CognitiveServices.Speech;
 using Microsoft.CognitiveServices.Speech.Audio;
+using Microsoft.CognitiveServices.Speech.Diagnostics.Logging;
 using Microsoft.CognitiveServices.Speech.Translation;
 #if NET461
 using System.Media;
@@ -140,12 +141,12 @@ namespace MicrosoftSpeechSDKSamples
 
             // Creates an instance of a speech translation config with specified subscription key and service region.
             // Replace with your own subscription key and service region (e.g., "westus").
-            var config = SpeechTranslationConfig.FromSubscription("YourSubscriptionKey", "YourServiceRegion");
+            var config = SpeechTranslationConfig.FromSubscription("7512a88ba189442cab271dd618757d38", "westcentralus");
             config.SpeechRecognitionLanguage = fromLanguage;
 
             // Translation target language(s).
             // Replace with language(s) of your choice.
-            config.AddTargetLanguage("de");
+            config.AddTargetLanguage("12345" /*"de"*/);
             config.AddTargetLanguage("fr");
 
             var stopTranslation = new TaskCompletionSource<int>();
@@ -479,7 +480,7 @@ namespace MicrosoftSpeechSDKSamples
 
             // Creates an instance of a speech translation config with specified subscription key and service region.
             // Replace with your own subscription key and service region (e.g., "westus").
-            var config = SpeechTranslationConfig.FromSubscription("YourSubscriptionKey", "YourServiceRegion");
+            var config = SpeechTranslationConfig.FromSubscription("7512a88ba189442cab271dd618757d38", "westcentralus");
 
             // This is required, even when language id is enabled.
             config.SpeechRecognitionLanguage = fromLanguage;
@@ -586,14 +587,16 @@ namespace MicrosoftSpeechSDKSamples
         // Translation using multi-lingual file input.
         public static async Task TranslationWithMultiLingualFileAsync_withLanguageDetectionEnabled()
         {
+          //  FileLogger.Start("c:\\temp\\lg-csharp-1.txt");
+
             // Offical v2 endpoint with service region
             // Please replace the service region with your region
-            var v2EndpointInString = String.Format("wss://{0}.stt.speech.microsoft.com/speech/universal/v2", "YourServiceRegion");
+            var v2EndpointInString = String.Format("wss://{0}.stt.speech.microsoft.com/speech/universal/v2", "westcentralus");
             var v2EndpointUrl = new Uri(v2EndpointInString);
 
             // Creates an instance of a speech translation config with specified subscription key and service region.
             // Please replace the service subscription key with your subscription key
-            var config = SpeechTranslationConfig.FromEndpoint(v2EndpointUrl, "YourSubscriptionKey");
+            var config = SpeechTranslationConfig.FromEndpoint(v2EndpointUrl, "7512a88ba189442cab271dd618757d38");
 
             // Sets source languages
             // The source language will be detected by the language detection feature. 
@@ -604,22 +607,33 @@ namespace MicrosoftSpeechSDKSamples
 
             // Translation target language(s).
             // Replace with language(s) of your choice.
-            config.AddTargetLanguage("de");
-            config.AddTargetLanguage("fr");
+            config.AddTargetLanguage("en");
+           // config.AddTargetLanguage("es");
+            config.AddTargetLanguage("ko");
+
+            SourceLanguageConfig[] sourceLanguageConfigs = new SourceLanguageConfig[2] {
+                SourceLanguageConfig.FromLanguage("en-US", "YourEnUSCustomModelID"),
+                SourceLanguageConfig.FromLanguage("ko-KR" /*, "es-MX"*/, "YourEsMxCustomModelID")
+            };
+
+            // Creates an instance of AutoDetectSourceLanguageConfig with the above 2 source language configurations.
+            AutoDetectSourceLanguageConfig autoDetectSourceLanguageConfig = AutoDetectSourceLanguageConfig.FromSourceLanguageConfigs(sourceLanguageConfigs);
+
 
             // Setup Language id property
             // Please refer to the documentation of language id with different modes
             config.SetProperty(PropertyId.SpeechServiceConnection_ContinuousLanguageIdPriority, "Latency");
-            var autoDetectSourceLanguageConfig = AutoDetectSourceLanguageConfig.FromLanguages(new string[] { "en-US", "zh-CN" });
+         //   var autoDetectSourceLanguageConfig = AutoDetectSourceLanguageConfig.FromLanguages(new string[] { "en-US", "zh-CN" });
 
             var stopTranslation = new TaskCompletionSource<int>();
 
             // Creates a translation recognizer using file as audio input.
             // Replace with your own audio file name.
-            using (var audioInput = AudioConfig.FromWavFileInput(@"en-us_zh-cn.wav"))
+            using (var audioInput = AudioConfig.FromWavFileInput(@"E:\Workplace\2020-Carbon\Java-LangugeID\For-LG\en-us_ko-kr.wav" /*@"en-us_zh-cn.wav"*/ /*@"d:\GitHub\carbon.6\build\bin\Debug\input\audio\en-us_es-mx.wav"*/))
             {
                 using (var recognizer = new TranslationRecognizer(config, autoDetectSourceLanguageConfig, audioInput))
                 {
+/*
                     // Subscribes to events.
                     recognizer.Recognizing += (s, e) =>
                     {
@@ -632,7 +646,7 @@ namespace MicrosoftSpeechSDKSamples
                             Console.WriteLine($"    TRANSLATING into '{element.Key}': {element.Value}");
                         }
                     };
-
+*/
                     recognizer.Recognized += (s, e) => {
                         if (e.Result.Reason == ResultReason.TranslatedSpeech)
                         {
@@ -699,6 +713,8 @@ namespace MicrosoftSpeechSDKSamples
                     await recognizer.StopContinuousRecognitionAsync().ConfigureAwait(false);
                 }
             }
+
+            FileLogger.Stop();
         }
 
         #endregion

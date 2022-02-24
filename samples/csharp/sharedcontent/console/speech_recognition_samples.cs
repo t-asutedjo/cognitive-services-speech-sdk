@@ -10,6 +10,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Microsoft.CognitiveServices.Speech;
 using Microsoft.CognitiveServices.Speech.Audio;
+using Microsoft.CognitiveServices.Speech.Diagnostics.Logging;
 using Microsoft.CognitiveServices.Speech.PronunciationAssessment;
 
 // </toplevel>
@@ -25,7 +26,7 @@ namespace MicrosoftSpeechSDKSamples
             // Creates an instance of a speech config with specified subscription key and service region.
             // Replace with your own subscription key and service region (e.g., "westus").
             // The default language is "en-us".
-            var config = SpeechConfig.FromSubscription("YourSubscriptionKey", "YourServiceRegion");
+            var config = SpeechConfig.FromSubscription("733696004bec44379d26a778d4c4f696", "eastus");
 
             // Creates a speech recognizer using microphone as audio input.
             using (var recognizer = new SpeechRecognizer(config))
@@ -192,10 +193,12 @@ namespace MicrosoftSpeechSDKSamples
         // Continuous speech recognition.
         public static async Task ContinuousRecognitionWithFileAsync()
         {
+            FileLogger.Start("c:\\temp\\temp.txt");
+
             // <recognitionContinuousWithFile>
             // Creates an instance of a speech config with specified subscription key and service region.
             // Replace with your own subscription key and service region (e.g., "westus").
-            var config = SpeechConfig.FromSubscription("YourSubscriptionKey", "YourServiceRegion");
+            var config = SpeechConfig.FromSubscription("733696004bec44379d26a778d4c4f696", "eastus");
 
             var stopRecognition = new TaskCompletionSource<int>();
 
@@ -261,6 +264,8 @@ namespace MicrosoftSpeechSDKSamples
                 }
             }
             // </recognitionContinuousWithFile>
+
+            FileLogger.Stop();
         }
 
         public static async Task SpeechRecognitionWithCompressedInputPullStreamAudio()

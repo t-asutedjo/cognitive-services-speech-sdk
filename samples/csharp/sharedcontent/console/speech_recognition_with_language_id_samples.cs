@@ -8,9 +8,9 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.CognitiveServices.Speech;
 using Microsoft.CognitiveServices.Speech.Audio;
+using Microsoft.CognitiveServices.Speech.Diagnostics.Logging;
 
 // </toplevel>
-
 namespace MicrosoftSpeechSDKSamples
 {
     public class SpeechRecognitionWithLanguageIdSamples
@@ -18,21 +18,29 @@ namespace MicrosoftSpeechSDKSamples
         /// <summary>
         /// The automatic detect source language configuration
         /// </summary>
-        private static AutoDetectSourceLanguageConfig autoDetectSourceLanguageConfig = AutoDetectSourceLanguageConfig.FromLanguages(new string[] { "en-US", "zh-CN" });
+        private static AutoDetectSourceLanguageConfig autoDetectSourceLanguageConfig = AutoDetectSourceLanguageConfig.FromLanguages(new string[] { "en-US", "de-DE", "zh-CN" });
 
         // Speech recognition from microphone.
         public static async Task RecognitionWithMicrophoneAsync()
         {
+            FileLogger.Start("c:\\temp\\temp.txt");
+
             // <recognitionWithMicrophone>
             // Creates an instance of a speech config with specified subscription key and service region.
             // Replace with your own subscription key and service region (e.g., "westus").
-            var config = SpeechConfig.FromSubscription("YourSubscriptionKey", "YourServiceRegion");
+            // var config = SpeechConfig.FromSubscription("17df10da-1222-435f-9caf-7f7e012c7ec4", "eastus");
+            var config = SpeechConfig.FromSubscription("7512a88ba189442cab271dd618757d38", "westcentralus");
 
             // Please refer to the documentation of language id with different modes
-            config.SetProperty(PropertyId.SpeechServiceConnection_SingleLanguageIdPriority, "Latency");
+            config.SetProperty(PropertyId.SpeechServiceConnection_SingleLanguageIdPriority, /*"Latency"*/"Accuracy");
+
+            //var audioFilename = "c:\\temp\\temp-16k-mono.wav";
+            //var audioFilename = "c:\\temp\\temp-8k-stereo.wav";
+            var audioFilename = "c:\\temp\\silence.wav";
+            var audioConfig = AudioConfig.FromWavFileInput(audioFilename);
 
             // Creates a speech recognizer using microphone as audio input.
-            using (var recognizer = new SpeechRecognizer(config, autoDetectSourceLanguageConfig))
+            using (var recognizer = new SpeechRecognizer(config, autoDetectSourceLanguageConfig, audioConfig))
             {
                 // Starts recognizing.
                 Console.WriteLine("Say something...");
@@ -68,6 +76,8 @@ namespace MicrosoftSpeechSDKSamples
                     }
                 }
             }
+
+            FileLogger.Stop();
             // </recognitionWithMicrophone>
         }
 
@@ -169,3 +179,4 @@ namespace MicrosoftSpeechSDKSamples
         }
     }
 }
+
