@@ -324,3 +324,6 @@ samples/js/**/microsoft.cognitiveservices.speech.sdk.bundle*.js*
 
 # iOS framwork
 samples/objective-c/ios/MicrosoftCognitiveServicesSpeech.framework/
+
+# Ingestion Portal Files
+**/IngestionClientPortal/www/build/
